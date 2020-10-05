@@ -82,6 +82,9 @@ autocmd Filetype c,cpp set comments^=:///
 set exrc
 set secure
 
+set inccommand=nosplit
+set lazyredraw
+
 " Plugins
 call plug#begin()
 Plug 'ctrlpvim/ctrlp.vim'
@@ -92,6 +95,7 @@ Plug 'haya14busa/incsearch-fuzzy.vim'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'neomake/neomake'
 Plug 'sheerun/vim-polyglot'
+Plug 'rust-lang/rust.vim'
 call plug#end()
 
 " ctrlp
