@@ -1,89 +1,47 @@
 set nocompatible
 
-set vb t_vb=
-
-" User interface
-
+" user interface
 set confirm
-
 syntax on
-
-set history=50
-set wildmenu
-set shortmess+=a
-
-set ruler
-set showmode
-set showcmd
-set showfulltag
-set display+=lastline
+set display+=uhex
 set number
-
-set nrformats=alpha,hex
 set showmatch
 set matchpairs+=<:>
-
 set autowrite
-
-" Mouse and keyboard
-
-set backspace=eol,start,indent
 set mouse=a
-
-" Text formatting
-
-filetype plugin indent on
-
-set wrap
 set linebreak
-set nojoinspaces
+set background=light
+set splitbelow
+set splitright
+set incsearch
+set gdefault
+set inccommand=nosplit
+set lazyredraw
 
-" no tabs, just two spaces
+" text formatting
+set nojoinspaces
 set expandtab
-set softtabstop=2
-set tabstop=2
-set shiftwidth=2
+set tabstop=4
 set shiftround
 set smarttab
 set autoindent
-
-set formatoptions=tcqrn
-set textwidth=80
-
-set scrolloff=2
+set formatoptions=tcqrnj
+set textwidth=110
+set scrolloff=3
 set sidescrolloff=20
-set previewheight=5
-
-" Searching and replacing
-set incsearch
-set gdefault
-
-" Splits
-set splitbelow
-set splitright
-
-" Color scheme
-colorscheme default
-set background=light
-
-" recognize .md as markdown
-autocmd BufNewFile,BufRead *.md set filetype=markdown
-
-" Python indenting
-autocmd FileType python setlocal softtabstop=4
-autocmd FileType python setlocal tabstop=4
-autocmd FileType python setlocal shiftwidth=4
-autocmd FileType python setlocal textwidth=90
+set textwidth=110
 
 " C/C++ Doxygen-style doc comments
-autocmd Filetype c,cpp set comments^=:///
 
 " Enable project-specific .vimrc
 set exrc
 set secure
 
-set inccommand=nosplit
-set lazyredraw
+" vim-polyglot
+let g:polyglot_disabled = ['c++11']
+
+" ale
+let g:ale_completion_enabled = 1
 
 " Plugins
 call plug#begin()
@@ -92,7 +50,7 @@ Plug 'christoomey/vim-tmux-navigator'
 Plug 'vim-python/python-syntax'
 Plug 'haya14busa/incsearch.vim'
 Plug 'haya14busa/incsearch-fuzzy.vim'
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'dense-analysis/ale'
 Plug 'neomake/neomake'
 Plug 'sheerun/vim-polyglot'
 Plug 'rust-lang/rust.vim'
@@ -121,20 +79,14 @@ map z/ <Plug>(incsearch-fuzzy-/)
 map z? <Plug>(incsearch-fuzzy-?)
 map zg/ <Plug>(incsearch-fuzzy-stay)
 
-" deoplete
-let g:deoplete#enable_at_startup=1
-call deoplete#custom#option('auto_complete', v:false)
-
-inoremap <silent><expr> <Tab>
-    \ pumvisible() ? "\<C-n>" :
-    \ !<SID>check_back_space() ? deoplete#manual_complete()."\<C-n>" :
-    \ "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-
-function! s:check_back_space() abort "{{{
-  let col = col('.') - 1
-  return !col || getline('.')[col-1] =~ '\s'
-endfunction"}}}
+" ale
+let g:ale_linters = {'rust': ['analyzer']}
+let g:ale_set_quickfix = 1
+let g:ale_floating_preview = 1
+map gd :ALEGoToDefinition<CR>
+map gD :ALEGoToTypeDefinition<CR>
+map ga :ALEHover<CR>
+set omnifunc=ale#completion#OmniFunc
 
 " neomake
 let g:neomake_virtualtext_current_error=0
@@ -143,9 +95,6 @@ let g:neomake_highlight_lines=1
 let g:neomake_place_signs=0
 call neomake#config#set('maker_defaults.buffer_output', 0)
 map <C-B> :wa<CR>:Neomake!<CR>:copen<CR>
-
-" vim-polyglot
-let g:polyglot_disabled = ['c++11']
 
 " bindings inspired by unimpaired.vim
 nnoremap <silent> ]q :cnext<CR>
