@@ -22,6 +22,7 @@ set lazyredraw
 set nojoinspaces
 set expandtab
 set tabstop=4
+set shiftwidth=4
 set shiftround
 set smarttab
 set autoindent
@@ -83,9 +84,13 @@ map zg/ <Plug>(incsearch-fuzzy-stay)
 let g:ale_linters = {'rust': ['analyzer']}
 let g:ale_set_quickfix = 1
 let g:ale_floating_preview = 1
-map gd :ALEGoToDefinition<CR>
-map gD :ALEGoToTypeDefinition<CR>
-map ga :ALEHover<CR>
+nnoremap gd :ALEGoToDefinition<CR>
+nnoremap gD :ALEGoToTypeDefinition<CR>
+nnoremap ga :ALEHover<CR>
+inoremap <silent><expr> <Tab>
+    \ pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <silent><expr> <S-Tab>
+    \ pumvisible() ? "\<C-p>" : "\<S-Tab>"
 set omnifunc=ale#completion#OmniFunc
 
 " neomake
