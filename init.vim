@@ -42,7 +42,8 @@ set secure
 let g:polyglot_disabled = ['c++11']
 
 " ale
-let g:ale_completion_enabled = 1
+let g:ale_enabled = 0
+let g:ale_completion_enabled = 0
 
 " Plugins
 call plug#begin()
