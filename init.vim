@@ -32,11 +32,8 @@ set scrolloff=3
 set sidescrolloff=20
 set textwidth=110
 
-" C/C++ Doxygen-style doc comments
-
-" Enable project-specific .vimrc
-set exrc
-set secure
+" C indentation
+set cinoptions+=l1
 
 " vim-polyglot
 let g:polyglot_disabled = ['c++11']
@@ -56,10 +53,16 @@ Plug 'dense-analysis/ale'
 Plug 'neomake/neomake'
 Plug 'sheerun/vim-polyglot'
 Plug 'rust-lang/rust.vim'
+Plug 'gpanders/editorconfig.nvim'
 call plug#end()
 
 " ctrlp
 let g:ctrlp_working_path_mode=''
+let g:ctrlp_max_files=100000
+let g:ctrlp_custom_ignore = {
+    \ 'file': '\v\.(o|so)$',
+    \ 'dir': '\v[\/](target|build|node_modules)$',
+    \ }
 
 " python-syntax
 let g:python_highlight_builtin_objs=1
@@ -82,11 +85,17 @@ map z? <Plug>(incsearch-fuzzy-?)
 map zg/ <Plug>(incsearch-fuzzy-stay)
 
 " ale
-let g:ale_linters = {'rust': ['analyzer']}
+let g:ale_linters = {
+    \ 'rust': ['analyzer'],
+    \ 'typescript': ['tsserver', 'eslint'],
+    \ 'typescriptreact': ['tsserver', 'eslint'],
+    \ }
+let g:ale_linters_explicit = 1
 let g:ale_set_quickfix = 1
 let g:ale_floating_preview = 1
 nnoremap gd :ALEGoToDefinition<CR>
 nnoremap gD :ALEGoToTypeDefinition<CR>
+nnoremap gf :ALEFindReferences<CR>
 nnoremap ga :ALEHover<CR>
 inoremap <silent><expr> <Tab>
     \ pumvisible() ? "\<C-n>" : "\<Tab>"
@@ -100,7 +109,7 @@ let g:neomake_highlight_columns=0
 let g:neomake_highlight_lines=1
 let g:neomake_place_signs=0
 call neomake#config#set('maker_defaults.buffer_output', 0)
-map <C-B> :wa<CR>:Neomake!<CR>:copen<CR>
+map <C-b> :wa<CR>:Neomake!<CR>:copen<CR>
 
 " bindings inspired by unimpaired.vim
 nnoremap <silent> ]q :cnext<CR>
