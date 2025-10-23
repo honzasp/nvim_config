@@ -14,9 +14,12 @@ set background=light
 set splitbelow
 set splitright
 set incsearch
+set hlsearch
 set gdefault
 set inccommand=nosplit
 set lazyredraw
+set notermguicolors
+colorscheme honzasp
 
 " text formatting
 set nojoinspaces
@@ -35,25 +38,14 @@ set textwidth=110
 " C indentation
 set cinoptions+=l1
 
-" vim-polyglot
-let g:polyglot_disabled = ['c++11']
-
-" ale
-let g:ale_enabled = 0
-let g:ale_completion_enabled = 0
-
 " Plugins
 call plug#begin()
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'christoomey/vim-tmux-navigator'
-Plug 'vim-python/python-syntax'
-Plug 'haya14busa/incsearch.vim'
-Plug 'haya14busa/incsearch-fuzzy.vim'
-Plug 'dense-analysis/ale'
 Plug 'neomake/neomake'
-Plug 'sheerun/vim-polyglot'
-Plug 'rust-lang/rust.vim'
+Plug 'romainl/vim-cool'
 Plug 'gpanders/editorconfig.nvim'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 call plug#end()
 
 " ctrlp
@@ -63,45 +55,6 @@ let g:ctrlp_custom_ignore = {
     \ 'file': '\v\.(o|so)$',
     \ 'dir': '\v[\/](target|build|node_modules)$',
     \ }
-
-" python-syntax
-let g:python_highlight_builtin_objs=1
-let g:python_highlight_class_vars=1
-
-" incsearch
-set hlsearch
-let g:incsearch#auto_nohlsearch=1
-map /  <Plug>(incsearch-forward)
-map ?  <Plug>(incsearch-backward)
-map g/ <Plug>(incsearch-stay)
-map n  <Plug>(incsearch-nohl-n)
-map N  <Plug>(incsearch-nohl-N)
-map *  <Plug>(incsearch-nohl-*)
-map #  <Plug>(incsearch-nohl-#)
-map g* <Plug>(incsearch-nohl-g*)
-map g# <Plug>(incsearch-nohl-g#)
-map z/ <Plug>(incsearch-fuzzy-/)
-map z? <Plug>(incsearch-fuzzy-?)
-map zg/ <Plug>(incsearch-fuzzy-stay)
-
-" ale
-let g:ale_linters = {
-    \ 'rust': ['analyzer'],
-    \ 'typescript': ['tsserver', 'eslint'],
-    \ 'typescriptreact': ['tsserver', 'eslint'],
-    \ }
-let g:ale_linters_explicit = 1
-let g:ale_set_quickfix = 1
-let g:ale_floating_preview = 1
-nnoremap gd :ALEGoToDefinition<CR>
-nnoremap gD :ALEGoToTypeDefinition<CR>
-nnoremap gf :ALEFindReferences<CR>
-nnoremap ga :ALEHover<CR>
-inoremap <silent><expr> <Tab>
-    \ pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <silent><expr> <S-Tab>
-    \ pumvisible() ? "\<C-p>" : "\<S-Tab>"
-set omnifunc=ale#completion#OmniFunc
 
 " neomake
 let g:neomake_virtualtext_current_error=0
@@ -120,3 +73,43 @@ nnoremap <silent> ]l :lnext<CR>
 nnoremap <silent> [l :lprev<CR>
 nnoremap <silent> ]L :lnfile<CR>
 nnoremap <silent> [L :lpfile<CR>
+
+" nvim-treesitter
+lua << EOF
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = { "rust", "python", "json", "yaml", "toml" },
+  sync_install = true,
+  auto_install = true,
+  highlight = {
+    enable = true,
+    -- Disable slow treesitter highlight for large files
+    disable = function(lang, buf)
+        local max_filesize = 100 * 1024 -- 100 KB
+        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+        if ok and stats and stats.size > max_filesize then
+            return true
+        end
+    end,
+    additional_vim_regex_highlighting = false,
+  },
+  incremental_selection = {
+    enable = true,
+    keymaps = {
+      init_selection = "<CR>",
+      node_incremental = "<CR>",
+      scope_incremental = false,
+      node_decremental = "<BS>",
+    },
+  },
+}
+EOF
+
+" fix Python indenting
+let g:python_indent = {
+    \ 'disable_parentheses_indenting': v:false,
+    \ 'closed_paren_align_last_line': v:false,
+    \ 'searchpair_timeout': 150,
+    \ 'continue': 'shiftwidth()',
+    \ 'open_paren': 'shiftwidth()',
+    \ 'nested_paren': 'shiftwidth()'
+    \ }

@@ -1,4 +1,5 @@
 .*.swp
 *~
 plugged/
+fish/fish_variables
 .netrwhist
